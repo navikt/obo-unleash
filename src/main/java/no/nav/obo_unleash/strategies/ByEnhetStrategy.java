@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.strategies;
+package no.nav.obo_unleash.strategies;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,8 +6,7 @@ import no.finn.unleash.UnleashContext;
 import no.finn.unleash.strategy.Strategy;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.types.identer.NavIdent;
-import no.nav.poao_unleash.env.NaisEnv;
-import no.nav.poao_unleash.utils.NAVidentUtils;
+import no.nav.obo_unleash.utils.NAVidentUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -18,19 +17,16 @@ import static java.util.stream.Collectors.toList;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ByEnhetAndEnvironmentStrategy implements Strategy {
+public class ByEnhetStrategy implements Strategy {
 
     static final String PARAM = "valgtEnhet";
-    static final String MILJO_PARAM = "tilgjengeligIProd";
     static final String TEMA_OPPFOLGING = "OPP";
     private final AxsysClient axsysClient;
-
-    private final NaisEnv naisEnv;
 
     @NotNull
     @Override
     public String getName() {
-        return "byEnhetAndEnvironment";
+        return "byEnhet";
     }
 
     @Override
@@ -40,15 +36,11 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
 
     @Override
     public boolean isEnabled(@NotNull Map<String, String> parameters, UnleashContext unleashContext) {
-        boolean enhetValgt = unleashContext.getUserId()
+        return unleashContext.getUserId()
                 .flatMap(currentUserId -> Optional.ofNullable(parameters.get(PARAM))
                         .map(enheterString -> Set.of(enheterString.split(",\\s?")))
                         .map(enabledeEnheter -> !Collections.disjoint(enabledeEnheter, brukersEnheter(currentUserId))))
                 .orElse(false);
-
-        if(!enhetValgt) return false;
-
-        return (naisEnv.isLocal() || naisEnv.isDevGCP()) || Objects.equals(parameters.get(MILJO_PARAM), "true");
     }
 
     private List<String> brukersEnheter(String navIdent) {

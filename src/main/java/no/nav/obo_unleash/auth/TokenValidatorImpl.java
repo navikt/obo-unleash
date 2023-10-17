@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.auth;
+package no.nav.obo_unleash.auth;
 
 
 import com.nimbusds.jose.JWSAlgorithm;

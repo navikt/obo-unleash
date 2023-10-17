@@ -1,6 +1,6 @@
-# poao-unleash
+# obo-unleash
 
-Felles tjeneste for å gjøre kall mot unleash med tilpassede strategier
+Tjeneste for å gjøre kall mot Unleash Next med tilpassede strategier
 
 ## Strategier
 Tjenesten støtter følgende strategier

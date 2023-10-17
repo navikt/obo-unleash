@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>no.nav</groupId>
-    <artifactId>poao-unleash</artifactId>
+    <artifactId>obo-unleash</artifactId>
     <version>1</version>
-    <name>poao-unleash</name>
-    <description>Felles tjeneste for å gjøre kall mot unleash med tilpassede strategier</description>
+    <name>obo-unleash</name>
+    <description>Tjeneste for å gjøre kall mot Unleash Next med tilpassede strategier</description>
 
     <properties>
         <java.version>17</java.version>
@@ -29,7 +29,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-        <finalName>poao-unleash</finalName>
+        <finalName>obo-unleash</finalName>
     </build>
 
     <repositories>

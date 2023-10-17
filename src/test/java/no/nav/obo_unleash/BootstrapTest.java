@@ -1,4 +1,4 @@
-package no.nav.poao_unleash;
+package no.nav.obo_unleash;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

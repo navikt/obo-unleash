@@ -2,7 +2,7 @@ name: Build, push and deploy
 on: push
 env:
   IMAGE_TAG: ${{ github.sha }}
-  IMAGE: ghcr.io/navikt/poao-unleash/poao-unleash
+  IMAGE: ghcr.io/navikt/obo-unleash/obo-unleash
   PRINT_PAYLOAD: true
 jobs:
   test:

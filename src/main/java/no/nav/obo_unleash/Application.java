@@ -1,4 +1,4 @@
-package no.nav.poao_unleash;
+package no.nav.obo_unleash;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.utils;
+package no.nav.obo_unleash.utils;
 
 public class NAVidentUtils {
     public static boolean erNavIdent(String verdi) {

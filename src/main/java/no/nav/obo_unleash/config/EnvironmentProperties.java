@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.config;
+package no.nav.obo_unleash.config;
 
 import lombok.Getter;
 import lombok.Setter;

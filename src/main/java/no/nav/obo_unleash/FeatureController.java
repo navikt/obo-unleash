@@ -1,4 +1,4 @@
-package no.nav.poao_unleash;
+package no.nav.obo_unleash;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import no.finn.unleash.UnleashContext;
 import no.nav.common.featuretoggle.UnleashClient;
-import no.nav.poao_unleash.auth.TokenValidator;
+import no.nav.obo_unleash.auth.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

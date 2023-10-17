@@ -1,4 +1,4 @@
-package no.nav.poao_unleash;
+package no.nav.obo_unleash;
 
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;
 import no.nav.common.client.axsys.AxsysClient;
@@ -9,13 +9,13 @@ import no.nav.common.featuretoggle.UnleashClientImpl;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder;
 import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
-import no.nav.poao_unleash.auth.TokenValidator;
-import no.nav.poao_unleash.auth.TokenValidatorImpl;
-import no.nav.poao_unleash.auth.discovery.OidcDiscoveryConfigurationClient;
-import no.nav.poao_unleash.config.EnvironmentProperties;
-import no.nav.poao_unleash.env.NaisEnv;
-import no.nav.poao_unleash.strategies.ByEnhetAndEnvironmentStrategy;
-import no.nav.poao_unleash.strategies.ByEnhetStrategy;
+import no.nav.obo_unleash.auth.TokenValidator;
+import no.nav.obo_unleash.auth.TokenValidatorImpl;
+import no.nav.obo_unleash.auth.discovery.OidcDiscoveryConfigurationClient;
+import no.nav.obo_unleash.config.EnvironmentProperties;
+import no.nav.obo_unleash.env.NaisEnv;
+import no.nav.obo_unleash.strategies.ByEnhetAndEnvironmentStrategy;
+import no.nav.obo_unleash.strategies.ByEnhetStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,7 @@ import java.util.List;
 @EnableConfigurationProperties({EnvironmentProperties.class})
 public class ApplicationConfig {
 
-    private final String APPLICATION_NAME = "poao-unleash";
+    private final static String APPLICATION_NAME = "obo-unleash";
 
     @Bean
     public FilterRegistrationBean<SetStandardHttpHeadersFilter> setStandardHttpHeadersFilter() {

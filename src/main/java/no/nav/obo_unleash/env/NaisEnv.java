@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.env;
+package no.nav.obo_unleash.env;
 
 import java.util.Objects;
 

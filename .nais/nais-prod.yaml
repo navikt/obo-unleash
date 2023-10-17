@@ -1,12 +1,12 @@
 kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
-  name: poao-unleash
-  namespace: poao
+  name: obo-unleash
+  namespace: obo
   labels:
-    team: poao
+    team: obo
 spec:
-  image: ghcr.io/navikt/poao-unleash/poao-unleash:{{version}}
+  image: ghcr.io/navikt/obo-unleash/obo-unleash:{{version}}
   port: 8080
   prometheus:
     enabled: true

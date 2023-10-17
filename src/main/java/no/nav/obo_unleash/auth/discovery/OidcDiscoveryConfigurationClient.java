@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.auth.discovery;
+package no.nav.obo_unleash.auth.discovery;
 
 import lombok.SneakyThrows;
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;

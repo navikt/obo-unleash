@@ -1,8 +1,8 @@
-package no.nav.poao_unleash;
+package no.nav.obo_unleash;
 
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import no.nav.common.featuretoggle.UnleashClient;
-import no.nav.poao_unleash.auth.TokenValidator;
+import no.nav.obo_unleash.auth.TokenValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

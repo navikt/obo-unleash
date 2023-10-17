@@ -1,4 +1,4 @@
-package no.nav.poao_unleash.auth.discovery;
+package no.nav.obo_unleash.auth.discovery;
 
 
 import com.fasterxml.jackson.annotation.JsonAlias;
