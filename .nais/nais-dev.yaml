@@ -36,6 +36,11 @@ spec:
         extra:
           - "NAVident"
   accessPolicy:
+    inbound:
+      rules:
+        - application: veilarbportefoljeflatefs
+          namespace: obo
+          cluster: dev-gcp
     outbound:
       external:
         - host: axsys.dev-fss-pub.nais.io
