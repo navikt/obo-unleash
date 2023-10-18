@@ -1,11 +1,11 @@
 package no.nav.obo_unleash;
 
+import io.getunleash.DefaultUnleash;
+import io.getunleash.UnleashContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import no.finn.unleash.UnleashContext;
-import no.nav.common.featuretoggle.UnleashClient;
 import no.nav.obo_unleash.auth.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +28,11 @@ import static no.nav.common.auth.utils.CookieUtils.getCookie;
 public class FeatureController {
 
     private static final String UNLEASH_SESSION_ID_COOKIE_NAME = "UNLEASH_SESSION_ID";
-    private final UnleashClient unleashClient;
+    private final DefaultUnleash unleashClient;
     private final TokenValidator tokenValidator;
 
     @Autowired
-    public FeatureController(UnleashClient unleashClient, TokenValidator tokenValidator) {
+    public FeatureController(DefaultUnleash unleashClient, TokenValidator tokenValidator) {
         this.unleashClient = unleashClient;
         this.tokenValidator = tokenValidator;
     }

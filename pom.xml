@@ -19,7 +19,8 @@
 
     <properties>
         <java.version>17</java.version>
-        <common.version>3.2023.03.22_12.48-00fcbdc8f455</common.version>
+        <common.version>3.2023.10.17_06.55-4e30d96bba05</common.version>
+        <unleash.version>8.4.0</unleash.version>
     </properties>
 
     <build>
@@ -80,13 +81,13 @@
             <artifactId>oauth2-oidc-sdk</artifactId>
             <version>9.43.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.getunleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
+            <version>${unleash.version}</version>
+        </dependency>
 
         <!-- NAV common -->
-        <dependency>
-            <groupId>com.github.navikt.common-java-modules</groupId>
-            <artifactId>feature-toggle</artifactId>
-            <version>${common.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.github.navikt.common-java-modules</groupId>
             <artifactId>log</artifactId>
@@ -105,6 +106,11 @@
         <dependency>
             <groupId>com.github.navikt.common-java-modules</groupId>
             <artifactId>token-client</artifactId>
+            <version>${common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.navikt.common-java-modules</groupId>
+            <artifactId>auth</artifactId>
             <version>${common.version}</version>
         </dependency>
 

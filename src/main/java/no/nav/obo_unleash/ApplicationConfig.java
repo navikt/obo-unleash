@@ -1,11 +1,12 @@
 package no.nav.obo_unleash;
 
+import io.getunleash.DefaultUnleash;
+import io.getunleash.util.UnleashConfig;
+import lombok.RequiredArgsConstructor;
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.axsys.AxsysV2ClientImpl;
 import no.nav.common.client.axsys.CachedAxsysClient;
-import no.nav.common.featuretoggle.UnleashClient;
-import no.nav.common.featuretoggle.UnleashClientImpl;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder;
 import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
@@ -21,13 +22,14 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 @Configuration
 @EnableConfigurationProperties({EnvironmentProperties.class})
+@RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final static String APPLICATION_NAME = "obo-unleash";
+
+    private final NaisEnv naisEnv;
 
     @Bean
     public FilterRegistrationBean<SetStandardHttpHeadersFilter> setStandardHttpHeadersFilter() {
@@ -39,8 +41,20 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public UnleashClient unleashClient(EnvironmentProperties environmentProperties, ByEnhetStrategy byEnhetStrategy, ByEnhetAndEnvironmentStrategy byEnhetAndEnvironmentStrategy) {
-        return new UnleashClientImpl(environmentProperties.getUnleashUrl(), APPLICATION_NAME, List.of(byEnhetStrategy, byEnhetAndEnvironmentStrategy));
+    public DefaultUnleash unleashClient(EnvironmentProperties environmentProperties, ByEnhetStrategy byEnhetStrategy, ByEnhetAndEnvironmentStrategy byEnhetAndEnvironmentStrategy) {
+        return new DefaultUnleash(
+            UnleashConfig
+                .builder()
+                .appName(APPLICATION_NAME)
+                .instanceId(APPLICATION_NAME)
+                .unleashAPI(environmentProperties.getUnleashUrl())
+                .apiKey(environmentProperties.getUnleashApiToken())
+                .environment(naisEnv.isProdGCP() ? "production" : "development")
+                .build()
+            ,
+            byEnhetStrategy,
+            byEnhetAndEnvironmentStrategy
+        );
     }
 
     @Bean
