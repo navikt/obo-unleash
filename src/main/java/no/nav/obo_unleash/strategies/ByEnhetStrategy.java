@@ -1,9 +1,9 @@
 package no.nav.obo_unleash.strategies;
 
+import io.getunleash.UnleashContext;
+import io.getunleash.strategy.Strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.finn.unleash.UnleashContext;
-import no.finn.unleash.strategy.Strategy;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.types.identer.NavIdent;
 import no.nav.obo_unleash.utils.NAVidentUtils;

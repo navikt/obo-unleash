@@ -1,7 +1,7 @@
 package no.nav.obo_unleash;
 
 import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
-import no.nav.common.featuretoggle.UnleashClient;
+import io.getunleash.DefaultUnleash;
 import no.nav.obo_unleash.auth.TokenValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ import static org.mockito.Mockito.mock;
 public class TestApplicationConfig {
 
     @Bean
-    public UnleashClient unleashClient() {
-        return mock(UnleashClient.class);
+    public DefaultUnleash unleashClient() {
+        return mock(DefaultUnleash.class);
     }
 
     @Bean

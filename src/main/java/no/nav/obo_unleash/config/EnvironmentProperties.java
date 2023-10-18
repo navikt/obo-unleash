@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.env")
 public class EnvironmentProperties {
     private String unleashUrl;
+    private String unleashApiToken;
     private String azureAdDiscoveryUrl;
     private String azureAdClientId;
     private String axsysUrl;
