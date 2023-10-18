@@ -24,12 +24,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties({EnvironmentProperties.class})
-@RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final static String APPLICATION_NAME = "obo-unleash";
-
-    private final NaisEnv naisEnv;
 
     @Bean
     public FilterRegistrationBean<SetStandardHttpHeadersFilter> setStandardHttpHeadersFilter() {
@@ -41,7 +38,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public DefaultUnleash unleashClient(EnvironmentProperties environmentProperties, ByEnhetStrategy byEnhetStrategy, ByEnhetAndEnvironmentStrategy byEnhetAndEnvironmentStrategy) {
+    public DefaultUnleash unleashClient(EnvironmentProperties environmentProperties, NaisEnv naisEnv, ByEnhetStrategy byEnhetStrategy, ByEnhetAndEnvironmentStrategy byEnhetAndEnvironmentStrategy) {
         return new DefaultUnleash(
             UnleashConfig
                 .builder()
