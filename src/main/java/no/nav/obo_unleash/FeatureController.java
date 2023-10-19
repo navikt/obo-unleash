@@ -43,7 +43,6 @@ public class FeatureController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-
         Optional<String> maybeNavident = Optional.ofNullable(request.getHeader("Authorization"))
                 .map(authHeader -> {
                     String[] parts = authHeader.split(" ");
