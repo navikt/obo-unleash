@@ -39,7 +39,7 @@ spec:
     outbound:
       external:
         - host: axsys.prod-fss-pub.nais.io
-        - host: team-obo-unleash-web.nav.cloud.nais.io
+        - host: team-obo-unleash-api.nav.cloud.nais.io
 
   env:
     - name: AXSYS_URL
