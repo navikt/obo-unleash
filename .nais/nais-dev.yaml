@@ -41,6 +41,9 @@ spec:
         - application: veilarbportefoljeflatefs
           namespace: obo
           cluster: dev-gcp
+        - application: veilarbvedtaksstottefs
+          namespace: obo
+          cluster: dev-gcp
     outbound:
       external:
         - host: axsys.dev-fss-pub.nais.io
