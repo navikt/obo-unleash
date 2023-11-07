@@ -78,16 +78,3 @@ jobs:
           CLUSTER: prod-gcp
           RESOURCE: .nais/nais-prod.yaml
           VAR: version=${{ env.IMAGE_TAG }}
-
-  release-prod:
-      name: Create prod release
-      needs: deploy-prod
-      runs-on: ubuntu-latest
-      steps:
-        - name: Create release
-          uses: softprops/action-gh-release@v1
-          with:
-            name: Release to prod
-            target_commitish: master
-            tag_name: release/prod@${{ env.IMAGE_TAG }}
-            prerelease: false
