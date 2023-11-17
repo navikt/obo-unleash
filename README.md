@@ -1,6 +1,8 @@
 # obo-unleash
 
-Tjeneste for å gjøre kall mot Unleash Next med tilpassede strategier
+Tjeneste for å gjøre kall mot Unleash Next med tilpassede strategier.
+
+_Forket fra [poao-unleash](https://github.com/navikt/poao-unleash)._
 
 ## Strategier
 Tjenesten støtter følgende strategier
