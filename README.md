@@ -18,3 +18,7 @@ byEnhetAndEnvironment-strategien brukes for å skru på funksjonalitet for en gi
 
 ### byEnhet
 byEnhet-strategien brukes for å skru på funksjonalitet for en gitt enhet med `fagområdet/tema = oppfølging (OPP)`. Feks vil verdien 0106 skru på funksjonalitet for alle i NAV-enheten Fredrikstad som har fagområdet `OPP` (oppfølging).
+
+## Kode generert av GitHub Copilot
+
+Dette repoet bruker GitHub Copilot til å generere kode.
