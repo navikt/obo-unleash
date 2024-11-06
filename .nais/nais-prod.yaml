@@ -6,7 +6,7 @@ metadata:
   labels:
     team: obo
 spec:
-  image: ghcr.io/navikt/obo-unleash/obo-unleash:{{version}}
+  image: {{image}}
   port: 8080
   prometheus:
     enabled: true

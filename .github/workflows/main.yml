@@ -1,12 +1,6 @@
 name: Build, push and deploy
 on: push
-env:
-  IMAGE_TAG: ${{ github.sha }}
-  IMAGE: ghcr.io/navikt/obo-unleash/obo-unleash
-  PRINT_PAYLOAD: true
-permissions:
-  packages: write
-  contents: write
+
 jobs:
   test:
     name: Run tests
@@ -15,37 +9,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: temurin
           cache: maven
+
       - name: Run maven tests
         run: mvn -B verify
 
   test-build-and-push:
     name: Test, build and push
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: temurin
           cache: maven
+
       - name: Build maven artifacts
         run: mvn -B package
-      - name: Build and push Docker image
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${GITHUB_REPOSITORY} --password-stdin
-          docker build -t ${IMAGE}:${IMAGE_TAG} .
-          docker push ${IMAGE}:${IMAGE_TAG}
+
+      - name: Build and push image and SBOM to OCI registry
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: obo
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
   deploy-dev:
     name: Deploy application to dev
@@ -57,12 +60,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Deploy application
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/nais-dev.yaml
-          VAR: version=${{ env.IMAGE_TAG }}
+          VAR: image=${{ needs.test-build-and-push.outputs.image }}
 
   deploy-prod:
     name: Deploy application to prod
@@ -74,9 +78,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Deploy application
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
           RESOURCE: .nais/nais-prod.yaml
-          VAR: version=${{ env.IMAGE_TAG }}
+          VAR: image=${{ needs.test-build-and-push.outputs.image }}
