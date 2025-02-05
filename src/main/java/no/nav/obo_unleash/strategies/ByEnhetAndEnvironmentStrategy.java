@@ -34,11 +34,6 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
     }
 
     @Override
-    public boolean isEnabled(@NotNull Map<String, String> parameters) {
-        return false;
-    }
-
-    @Override
     public boolean isEnabled(@NotNull Map<String, String> parameters, UnleashContext unleashContext) {
         boolean enhetValgt = unleashContext.getUserId()
                 .flatMap(currentUserId -> Optional.ofNullable(parameters.get(PARAM))
