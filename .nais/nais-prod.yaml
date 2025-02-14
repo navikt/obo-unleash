@@ -47,6 +47,8 @@ spec:
         - application: arbeidssokerregistrering-for-veileder
           namespace: paw
           cluster: prod-gcp
+        - application: inngar
+          namespace: dab
     outbound:
       external:
         - host: axsys.prod-fss-pub.nais.io
