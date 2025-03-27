@@ -49,6 +49,8 @@ spec:
           cluster: dev-gcp
         - application: inngar
           namespace: dab
+        - application: beslutteroversikt
+          namespace: obo
     outbound:
       external:
         - host: axsys.dev-fss-pub.nais.io
