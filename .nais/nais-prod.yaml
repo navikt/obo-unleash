@@ -55,12 +55,15 @@ spec:
       external:
         - host: axsys.prod-fss-pub.nais.io
         - host: team-obo-unleash-api.nav.cloud.nais.io
-
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
   env:
     - name: AXSYS_URL
       value: https://axsys.prod-fss-pub.nais.io
     - name: AXSYS_SCOPE
       value: api://prod-fss.org.axsys/.default
-
   envFrom:
     - secret: obo-unleash-api-token
