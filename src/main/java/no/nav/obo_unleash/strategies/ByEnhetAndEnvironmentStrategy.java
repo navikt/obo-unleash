@@ -5,7 +5,11 @@ import io.getunleash.strategy.Strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.client.axsys.AxsysClient;
+import no.nav.common.client.msgraph.AdGroupData;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
 import no.nav.common.types.identer.NavIdent;
+import no.nav.obo_unleash.config.EnvironmentProperties;
 import no.nav.obo_unleash.env.NaisEnv;
 import no.nav.obo_unleash.utils.NAVidentUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +30,9 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
     private final AxsysClient axsysClient;
 
     private final NaisEnv naisEnv;
+    private final MsGraphClient msGraphClient;
+    private final EnvironmentProperties environmentProperties;
+    private final AzureAdMachineToMachineTokenClient azureAdMachineToMachineTokenClient;
 
     @NotNull
     @Override
@@ -51,13 +58,37 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
             log.warn("Fikk ident som ikke er en NAVident. Om man ser mye av denne feilen bør man utforske hvorfor.");
             return Collections.emptyList();
         }
+        List<String> enheterFraAxsys;
+        List<String> enheterFraEntra;
 
-        return hentEnheter(navIdent);
+        enheterFraAxsys = hentEnheter(navIdent);
+        try {
+            enheterFraEntra = hentEnheterFraEntraId(navIdent);
+            if (!enheterFraEntra.isEmpty()) {
+                log.info(
+                        "Første enhet fra Entra: {} Antall enheter fra Entra: {} Antall enheter fra Axsys: {}",
+                        enheterFraEntra.getFirst(), enheterFraEntra.size(), enheterFraAxsys.size()
+                );
+            } else {
+                log.info("Ingen enheter funnet fra Entra");
+            }
+        } catch (Exception e) {
+            log.error("Feil ved henting av enheter fra Entra: {}", e.getMessage(), e);
+        }
+
+        return enheterFraAxsys;
     }
-
     private List<String> hentEnheter(String navIdent) {
         return axsysClient.hentTilganger(new NavIdent(navIdent)).stream()
                 .filter(enhet -> enhet.getTemaer().contains(TEMA_OPPFOLGING))
                 .map(enhet -> enhet.getEnhetId().get()).collect(toList());
+    }
+
+    public List<String> hentEnheterFraEntraId(String navIdent ) {
+        return msGraphClient.hentAdGroupsForUser(azureAdMachineToMachineTokenClient.createMachineToMachineToken(environmentProperties.getMicrosoftGraphScope()), navIdent).stream()
+                .map(AdGroupData::getDisplayName)
+                .filter(name -> name != null && name.startsWith("0000-GA-ENHET_"))
+                .map(name -> name.substring(14))
+                .collect(toList());
     }
 }

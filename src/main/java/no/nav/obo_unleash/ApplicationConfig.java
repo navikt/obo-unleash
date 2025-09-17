@@ -2,11 +2,13 @@ package no.nav.obo_unleash;
 
 import io.getunleash.DefaultUnleash;
 import io.getunleash.util.UnleashConfig;
-import lombok.RequiredArgsConstructor;
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.axsys.AxsysV2ClientImpl;
 import no.nav.common.client.axsys.CachedAxsysClient;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.client.msgraph.CachedMsGraphClient;
+import no.nav.common.client.msgraph.MsGraphHttpClient;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder;
 import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
@@ -65,6 +67,12 @@ public class ApplicationConfig {
     public AxsysClient axsysClient(EnvironmentProperties environmentProperties, AzureAdMachineToMachineTokenClient azureAdMachineToMachineTokenClient) {
         AxsysClient axsysClient = new AxsysV2ClientImpl(environmentProperties.getAxsysUrl(), () -> azureAdMachineToMachineTokenClient.createMachineToMachineToken(environmentProperties.getAxsysScope()));
         return new CachedAxsysClient(axsysClient);
+    }
+
+    @Bean
+    public MsGraphClient msGraphClient(EnvironmentProperties environmentProperties) {
+       MsGraphClient msGraphClient = new MsGraphHttpClient(environmentProperties.getMicrosoftGraphUri());
+       return new CachedMsGraphClient(msGraphClient);
     }
 
     @Bean
