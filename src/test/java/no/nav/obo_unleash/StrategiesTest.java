@@ -2,10 +2,12 @@ package no.nav.obo_unleash;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.common.auth.context.AuthContextHolderThreadLocal;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.msgraph.AdGroupData;
+import no.nav.common.client.msgraph.AdGroupFilter;
 import no.nav.common.client.msgraph.MsGraphClient;
-import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
+import no.nav.common.token_client.client.AzureAdOnBehalfOfTokenClient;
 import no.nav.obo_unleash.config.EnvironmentProperties;
 import no.nav.obo_unleash.env.NaisEnv;
 import no.nav.obo_unleash.strategies.ByEnhetAndEnvironmentStrategy;
@@ -30,7 +32,10 @@ class StrategiesTest {
     private MsGraphClient msGraphClient;
 
     @Mock
-    private AzureAdMachineToMachineTokenClient tokenClient;
+    private AzureAdOnBehalfOfTokenClient tokenClient;
+
+    @Mock
+    private AuthContextHolderThreadLocal authContextHolder;
 
     @Mock
     private EnvironmentProperties environmentProperties;
@@ -47,9 +52,8 @@ class StrategiesTest {
     @BeforeEach
     void setup() throws IOException {
         strategy = new ByEnhetAndEnvironmentStrategy(axsysClient, naisEnv, msGraphClient,
-                environmentProperties, tokenClient);
+                environmentProperties, tokenClient, authContextHolder);
 
-        // Load test data from JSON file
         String jsonContent = new String(Files.readAllBytes(Paths.get("src/test/resources/adGroupData.json")));
         ObjectMapper objectMapper = new ObjectMapper();
         testAdGroupData = objectMapper.readValue(jsonContent, new TypeReference<List<AdGroupData>>() {});
@@ -57,29 +61,23 @@ class StrategiesTest {
 
     @Test
     void hentEnheterFraEntraId_shouldFilterAndExtractCorrectEnhetIds() {
-        // Given
+
         String navIdent = "Z999999";
         String scope = "api://dev.scope";
         String token = "dummy-token";
 
         when(environmentProperties.getMicrosoftGraphScope()).thenReturn(scope);
-        when(tokenClient.createMachineToMachineToken(scope)).thenReturn(token);
-        when(msGraphClient.hentAdGroupsForUser(token, navIdent)).thenReturn(testAdGroupData);
+        when(tokenClient.exchangeOnBehalfOfToken(scope, navIdent)).thenReturn(token);
+        when(msGraphClient.hentAdGroupsForUser(token, AdGroupFilter.ENHET)).thenReturn(testAdGroupData);
+        when(authContextHolder.requireIdTokenString()).thenReturn(navIdent);
 
-        // When
-        List<String> result = strategy.hentEnheterFraEntraId(navIdent);
+        List<String> result = strategy.hentEnheterFraEntraId();
 
-        // Then
         assertEquals(14, result.size());
         assertTrue(result.contains("1234"));
         assertTrue(result.contains("4321"));
         assertTrue(result.contains("0100"));
         assertTrue(result.contains("0200"));
         assertTrue(result.contains("0300"));
-
-        // Verify none of the non-enhet groups were included
-        assertFalse(result.contains("Team_Alpha"));
-        assertFalse(result.contains("Team_Beta"));
-        assertFalse(result.contains("IT-Support"));
     }
 }

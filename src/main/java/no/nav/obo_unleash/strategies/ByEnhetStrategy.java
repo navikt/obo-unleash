@@ -4,8 +4,15 @@ import io.getunleash.UnleashContext;
 import io.getunleash.strategy.Strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.auth.context.AuthContextHolder;
 import no.nav.common.client.axsys.AxsysClient;
+import no.nav.common.client.msgraph.AdGroupData;
+import no.nav.common.client.msgraph.AdGroupFilter;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.token_client.client.AzureAdOnBehalfOfTokenClient;
 import no.nav.common.types.identer.NavIdent;
+import no.nav.obo_unleash.config.EnvironmentProperties;
+import no.nav.obo_unleash.utils.MsGraphUtils;
 import no.nav.obo_unleash.utils.NAVidentUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -22,6 +29,11 @@ public class ByEnhetStrategy implements Strategy {
     static final String PARAM = "valgtEnhet";
     static final String TEMA_OPPFOLGING = "OPP";
     private final AxsysClient axsysClient;
+    private final MsGraphClient msGraphClient;
+    private final EnvironmentProperties environmentProperties;
+    private final AzureAdOnBehalfOfTokenClient azureAdOnBehalfOfTokenClient;
+    private final AuthContextHolder authContextHolder;
+
 
     @NotNull
     @Override
@@ -43,13 +55,42 @@ public class ByEnhetStrategy implements Strategy {
             log.warn("Fikk ident som ikke er en NAVident. Om man ser mye av denne feilen bør man utforske hvorfor.");
             return Collections.emptyList();
         }
-
-        return hentEnheter(navIdent);
+        List<String> enheterFraAxsys = hentEnheter(navIdent);
+        List<String> enheterFraEntra;
+        try {
+            enheterFraEntra = hentEnheterFraEntraId();
+            if (!enheterFraEntra.isEmpty()) {
+                log.info(
+                        "Første enhet fra Entra: {} Antall enheter fra Entra: {} Antall enheter fra Axsys: {}",
+                        enheterFraEntra.getFirst(), enheterFraEntra.size(), enheterFraAxsys.size()
+                );
+            } else {
+                log.info("Ingen enheter funnet fra Entra");
+            }
+        } catch (Exception e) {
+            log.error("ByEnhet: Klarte ikke hente enheter fra EntraId. Feilmelding: {}", e.getMessage());
+        }
+        return enheterFraAxsys;
     }
 
     private List<String> hentEnheter(String navIdent) {
         return axsysClient.hentTilganger(new NavIdent(navIdent)).stream()
                 .filter(enhet -> enhet.getTemaer().contains(TEMA_OPPFOLGING))
                 .map(enhet -> enhet.getEnhetId().get()).collect(toList());
+    }
+    public List<String> hentEnheterFraEntraId() {
+        List<AdGroupData> adGroups = msGraphClient.hentAdGroupsForUser(
+                azureAdOnBehalfOfTokenClient.exchangeOnBehalfOfToken(
+                        environmentProperties.getMicrosoftGraphScope(),
+                        authContextHolder.requireIdTokenString()
+                ),
+                AdGroupFilter.ENHET
+        );
+
+        return adGroups.stream()
+                .map(AdGroupData::displayName)
+                .filter(Objects::nonNull)
+                .map(MsGraphUtils::tilEnhetId)
+                .collect(toList());
     }
 }
