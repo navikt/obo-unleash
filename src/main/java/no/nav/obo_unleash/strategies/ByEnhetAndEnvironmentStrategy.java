@@ -5,15 +5,12 @@ import io.getunleash.strategy.Strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.common.auth.context.AuthContextHolder;
-import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.msgraph.AdGroupData;
 import no.nav.common.client.msgraph.AdGroupFilter;
 import no.nav.common.client.msgraph.MsGraphClient;
 import no.nav.common.token_client.client.AzureAdOnBehalfOfTokenClient;
-import no.nav.common.types.identer.NavIdent;
 import no.nav.obo_unleash.config.EnvironmentProperties;
 import no.nav.obo_unleash.env.NaisEnv;
-import no.nav.obo_unleash.utils.NAVidentUtils;
 import no.nav.obo_unleash.utils.MsGraphUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -30,8 +27,6 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
 
     static final String PARAM = "valgtEnhet";
     static final String MILJO_PARAM = "tilgjengeligIProd";
-    static final String TEMA_OPPFOLGING = "OPP";
-    private final AxsysClient axsysClient;
 
     private final NaisEnv naisEnv;
     private final MsGraphClient msGraphClient;
@@ -50,7 +45,7 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
         boolean enhetValgt = unleashContext.getUserId()
                 .flatMap(currentUserId -> Optional.ofNullable(parameters.get(PARAM))
                         .map(enheterString -> Set.of(enheterString.split(",\\s?")))
-                        .map(enabledeEnheter -> !Collections.disjoint(enabledeEnheter, brukersEnheter(currentUserId))))
+                        .map(enabledeEnheter -> !Collections.disjoint(enabledeEnheter, brukersEnheter())))
                 .orElse(false);
 
         if (!enhetValgt) return false;
@@ -58,21 +53,15 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
         return (naisEnv.isLocal() || naisEnv.isDevGCP()) || Objects.equals(parameters.get(MILJO_PARAM), "true");
     }
 
-    private List<String> brukersEnheter(String navIdent) {
-        if (!NAVidentUtils.erNavIdent(navIdent)) {
-            log.warn("Fikk ident som ikke er en NAVident. Om man ser mye av denne feilen bør man utforske hvorfor.");
-            return Collections.emptyList();
-        }
-        List<String> enheterFraAxsys;
-        List<String> enheterFraEntra;
+    private List<String> brukersEnheter() {
 
-        enheterFraAxsys = hentEnheter(navIdent);
+        List<String> enheterFraEntra = hentEnheterFraEntraId();
+
         try {
-            enheterFraEntra = hentEnheterFraEntraId();
             if (!enheterFraEntra.isEmpty()) {
                 log.info(
-                        "Første enhet fra Entra: {} Antall enheter fra Entra: {} Antall enheter fra Axsys: {}",
-                        enheterFraEntra.getFirst(), enheterFraEntra.size(), enheterFraAxsys.size()
+                        "Første enhet fra Entra: {} Antall enheter fra Entra: {}",
+                        enheterFraEntra.getFirst(), enheterFraEntra.size()
                 );
             } else {
                 log.info("Ingen enheter funnet fra Entra");
@@ -81,13 +70,7 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
             log.error("Feil ved henting av enheter fra Entra: {}", e.getMessage(), e);
         }
 
-        return enheterFraAxsys;
-    }
-
-    private List<String> hentEnheter(String navIdent) {
-        return axsysClient.hentTilganger(new NavIdent(navIdent)).stream()
-                .filter(enhet -> enhet.getTemaer().contains(TEMA_OPPFOLGING))
-                .map(enhet -> enhet.getEnhetId().get()).collect(toList());
+        return enheterFraEntra;
     }
 
     public List<String> hentEnheterFraEntraId() {
