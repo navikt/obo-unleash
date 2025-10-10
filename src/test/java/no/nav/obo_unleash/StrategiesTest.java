@@ -3,7 +3,6 @@ package no.nav.obo_unleash;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.common.auth.context.AuthContextHolderThreadLocal;
-import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.msgraph.AdGroupData;
 import no.nav.common.client.msgraph.AdGroupFilter;
 import no.nav.common.client.msgraph.MsGraphClient;
@@ -43,20 +42,18 @@ class StrategiesTest {
     @Mock
     private NaisEnv naisEnv;
 
-    @Mock
-    private AxsysClient axsysClient;
-
     private ByEnhetAndEnvironmentStrategy strategy;
     private List<AdGroupData> testAdGroupData;
 
     @BeforeEach
     void setup() throws IOException {
-        strategy = new ByEnhetAndEnvironmentStrategy(axsysClient, naisEnv, msGraphClient,
+        strategy = new ByEnhetAndEnvironmentStrategy(naisEnv, msGraphClient,
                 environmentProperties, tokenClient, authContextHolder);
 
         String jsonContent = new String(Files.readAllBytes(Paths.get("src/test/resources/adGroupData.json")));
         ObjectMapper objectMapper = new ObjectMapper();
-        testAdGroupData = objectMapper.readValue(jsonContent, new TypeReference<List<AdGroupData>>() {});
+        testAdGroupData = objectMapper.readValue(jsonContent, new TypeReference<>() {
+        });
     }
 
     @Test

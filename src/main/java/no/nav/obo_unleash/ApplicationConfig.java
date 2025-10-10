@@ -5,9 +5,6 @@ import io.getunleash.util.UnleashConfig;
 import no.nav.common.auth.context.AuthContextHolder;
 import no.nav.common.auth.context.AuthContextHolderThreadLocal;
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;
-import no.nav.common.client.axsys.AxsysClient;
-import no.nav.common.client.axsys.AxsysV2ClientImpl;
-import no.nav.common.client.axsys.CachedAxsysClient;
 import no.nav.common.client.msgraph.MsGraphClient;
 import no.nav.common.client.msgraph.CachedMsGraphClient;
 import no.nav.common.client.msgraph.MsGraphHttpClient;
@@ -64,12 +61,6 @@ public class ApplicationConfig {
         OidcDiscoveryConfigurationClient oidcClient = new OidcDiscoveryConfigurationClient();
         OidcDiscoveryConfiguration oidcDiscoveryConfiguration = oidcClient.fetchDiscoveryConfiguration(environmentProperties.getAzureAdDiscoveryUrl());
         return new TokenValidatorImpl(environmentProperties.getAzureAdClientId(), oidcDiscoveryConfiguration);
-    }
-
-    @Bean
-    public AxsysClient axsysClient(EnvironmentProperties environmentProperties, AzureAdMachineToMachineTokenClient azureAdMachineToMachineTokenClient) {
-        AxsysClient axsysClient = new AxsysV2ClientImpl(environmentProperties.getAxsysUrl(), () -> azureAdMachineToMachineTokenClient.createMachineToMachineToken(environmentProperties.getAxsysScope()));
-        return new CachedAxsysClient(axsysClient);
     }
 
     @Bean

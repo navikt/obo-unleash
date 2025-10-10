@@ -1,6 +1,5 @@
 package no.nav.obo_unleash;
 
-import com.nimbusds.openid.connect.sdk.claims.IDTokenClaimsSet;
 import io.getunleash.DefaultUnleash;
 import no.nav.obo_unleash.auth.TokenValidator;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +21,6 @@ public class TestApplicationConfig {
 
     @Bean
     public TokenValidator tokenValidator() {
-        return new TokenValidator() {
-            @Override
-            public Optional<IDTokenClaimsSet> validate(String token) {
-                return Optional.empty();
-            }
-        };
+        return token -> Optional.empty();
     }
 }
