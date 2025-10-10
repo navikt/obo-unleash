@@ -53,7 +53,6 @@ spec:
           namespace: obo
     outbound:
       external:
-        - host: axsys.prod-fss-pub.nais.io
         - host: team-obo-unleash-api.nav.cloud.nais.io
   observability:
     logging:
@@ -61,10 +60,6 @@ spec:
         - id: elastic
         - id: loki
   env:
-    - name: AXSYS_URL
-      value: https://axsys.prod-fss-pub.nais.io
-    - name: AXSYS_SCOPE
-      value: api://prod-fss.org.axsys/.default
     - name: MICROSOFT_GRAPH_URI
       value: https://graph.microsoft.com/v1.0
     - name: MICROSOFT_GRAPH_SCOPE
