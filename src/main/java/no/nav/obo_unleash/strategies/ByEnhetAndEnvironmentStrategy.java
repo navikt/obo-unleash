@@ -4,16 +4,24 @@ import io.getunleash.UnleashContext;
 import io.getunleash.strategy.Strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.common.auth.context.AuthContextHolder;
 import no.nav.common.client.axsys.AxsysClient;
+import no.nav.common.client.msgraph.AdGroupData;
+import no.nav.common.client.msgraph.AdGroupFilter;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.token_client.client.AzureAdOnBehalfOfTokenClient;
 import no.nav.common.types.identer.NavIdent;
+import no.nav.obo_unleash.config.EnvironmentProperties;
 import no.nav.obo_unleash.env.NaisEnv;
 import no.nav.obo_unleash.utils.NAVidentUtils;
+import no.nav.obo_unleash.utils.MsGraphUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +34,10 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
     private final AxsysClient axsysClient;
 
     private final NaisEnv naisEnv;
+    private final MsGraphClient msGraphClient;
+    private final EnvironmentProperties environmentProperties;
+    private final AzureAdOnBehalfOfTokenClient azureAdOnBehalfOfTokenClient;
+    private final AuthContextHolder authContextHolder;
 
     @NotNull
     @Override
@@ -41,7 +53,7 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
                         .map(enabledeEnheter -> !Collections.disjoint(enabledeEnheter, brukersEnheter(currentUserId))))
                 .orElse(false);
 
-        if(!enhetValgt) return false;
+        if (!enhetValgt) return false;
 
         return (naisEnv.isLocal() || naisEnv.isDevGCP()) || Objects.equals(parameters.get(MILJO_PARAM), "true");
     }
@@ -51,8 +63,25 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
             log.warn("Fikk ident som ikke er en NAVident. Om man ser mye av denne feilen bør man utforske hvorfor.");
             return Collections.emptyList();
         }
+        List<String> enheterFraAxsys;
+        List<String> enheterFraEntra;
 
-        return hentEnheter(navIdent);
+        enheterFraAxsys = hentEnheter(navIdent);
+        try {
+            enheterFraEntra = hentEnheterFraEntraId();
+            if (!enheterFraEntra.isEmpty()) {
+                log.info(
+                        "Første enhet fra Entra: {} Antall enheter fra Entra: {} Antall enheter fra Axsys: {}",
+                        enheterFraEntra.getFirst(), enheterFraEntra.size(), enheterFraAxsys.size()
+                );
+            } else {
+                log.info("Ingen enheter funnet fra Entra");
+            }
+        } catch (Exception e) {
+            log.error("Feil ved henting av enheter fra Entra: {}", e.getMessage(), e);
+        }
+
+        return enheterFraAxsys;
     }
 
     private List<String> hentEnheter(String navIdent) {
@@ -60,4 +89,21 @@ public class ByEnhetAndEnvironmentStrategy implements Strategy {
                 .filter(enhet -> enhet.getTemaer().contains(TEMA_OPPFOLGING))
                 .map(enhet -> enhet.getEnhetId().get()).collect(toList());
     }
+
+    public List<String> hentEnheterFraEntraId() {
+        List<AdGroupData> adGroups = msGraphClient.hentAdGroupsForUser(
+                azureAdOnBehalfOfTokenClient.exchangeOnBehalfOfToken(
+                        environmentProperties.getMicrosoftGraphScope(),
+                        authContextHolder.requireIdTokenString()
+                ),
+                AdGroupFilter.ENHET
+        );
+
+        return adGroups.stream()
+                .map(AdGroupData::displayName)
+                .filter(Objects::nonNull)
+                .map(MsGraphUtils::tilEnhetId)
+                .collect(toList());
+    }
+
 }

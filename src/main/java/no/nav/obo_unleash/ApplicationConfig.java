@@ -2,14 +2,19 @@ package no.nav.obo_unleash;
 
 import io.getunleash.DefaultUnleash;
 import io.getunleash.util.UnleashConfig;
-import lombok.RequiredArgsConstructor;
+import no.nav.common.auth.context.AuthContextHolder;
+import no.nav.common.auth.context.AuthContextHolderThreadLocal;
 import no.nav.common.auth.oidc.discovery.OidcDiscoveryConfiguration;
 import no.nav.common.client.axsys.AxsysClient;
 import no.nav.common.client.axsys.AxsysV2ClientImpl;
 import no.nav.common.client.axsys.CachedAxsysClient;
+import no.nav.common.client.msgraph.MsGraphClient;
+import no.nav.common.client.msgraph.CachedMsGraphClient;
+import no.nav.common.client.msgraph.MsGraphHttpClient;
 import no.nav.common.rest.filter.SetStandardHttpHeadersFilter;
 import no.nav.common.token_client.builder.AzureAdTokenClientBuilder;
 import no.nav.common.token_client.client.AzureAdMachineToMachineTokenClient;
+import no.nav.common.token_client.client.AzureAdOnBehalfOfTokenClient;
 import no.nav.obo_unleash.auth.TokenValidator;
 import no.nav.obo_unleash.auth.TokenValidatorImpl;
 import no.nav.obo_unleash.auth.discovery.OidcDiscoveryConfigurationClient;
@@ -68,10 +73,28 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public MsGraphClient msGraphClient(EnvironmentProperties environmentProperties) {
+       MsGraphClient msGraphClient = new MsGraphHttpClient(environmentProperties.getMicrosoftGraphUri());
+       return new CachedMsGraphClient(msGraphClient);
+    }
+
+    @Bean
     public AzureAdMachineToMachineTokenClient azureAdMachineToMachineTokenClient() {
         return AzureAdTokenClientBuilder.builder()
                 .withNaisDefaults()
                 .buildMachineToMachineTokenClient();
+    }
+
+    @Bean
+    AzureAdOnBehalfOfTokenClient azureAdOnBehalfOfTokenClient() {
+        return AzureAdTokenClientBuilder.builder()
+                .withNaisDefaults()
+                .buildOnBehalfOfTokenClient();
+    }
+
+    @Bean
+    AuthContextHolder authContextHolder() {
+        return AuthContextHolderThreadLocal.instance();
     }
 
     @Bean
