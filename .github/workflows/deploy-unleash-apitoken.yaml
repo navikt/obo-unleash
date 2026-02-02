@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Deploy unleash-apitoken
         uses: nais/deploy/actions/deploy@v2
         env:
@@ -25,14 +26,15 @@ jobs:
           PRINT_PAYLOAD: true
 
   deploy-prod:
+    if: github.ref == 'refs/heads/main'
     name: Deploy unleash-apitoken to prod
-    runs-on: ubuntu-latest
     permissions:
       id-token: write
-    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        
       - name: Deploy unleash-apitoken
         uses: nais/deploy/actions/deploy@v2
         if: github.ref == 'refs/heads/main'

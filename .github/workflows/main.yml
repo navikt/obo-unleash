@@ -21,13 +21,13 @@ jobs:
         run: mvn -B verify
 
   test-build-and-push:
+    if: github.ref == 'refs/heads/main'
     name: Test, build and push
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
-    if: github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -47,12 +47,10 @@ jobs:
         id: docker-build-push
         with:
           team: obo
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
   deploy-dev:
-    name: Deploy application to dev
     if: github.ref == 'refs/heads/main'
+    name: Deploy application to dev
     needs: test-build-and-push
     permissions:
       id-token: write
@@ -69,8 +67,8 @@ jobs:
           VAR: image=${{ needs.test-build-and-push.outputs.image }}
 
   deploy-prod:
-    name: Deploy application to prod
     if: github.ref == 'refs/heads/main'
+    name: Deploy application to prod
     needs: test-build-and-push
     permissions:
       id-token: write
