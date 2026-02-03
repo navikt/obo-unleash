@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
         <relativePath/>
     </parent>
 
@@ -19,9 +19,8 @@
 
     <properties>
         <java.version>21</java.version>
-        <common.version>3.2025.10.10_08.21-bb7c7830d93c</common.version>
-        <unleash.version>11.2.1</unleash.version>
-
+        <common.version>3.2025.11.10_14.07-a9f44944d7bc</common.version>
+        <unleash.version>12.1.1</unleash.version>
     </properties>
 
     <build>
@@ -85,7 +84,7 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>11.31.1</version>
+            <version>11.32</version>
         </dependency>
         <dependency>
             <groupId>io.getunleash</groupId>
