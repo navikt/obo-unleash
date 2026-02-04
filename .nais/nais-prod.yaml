@@ -53,7 +53,7 @@ spec:
           namespace: obo
     outbound:
       external:
-        - host: team-obo-unleash-api.nav.cloud.nais.io
+        - host: obo-unleash-api.nav.cloud.nais.io
   observability:
     autoInstrumentation:
       enabled: true
