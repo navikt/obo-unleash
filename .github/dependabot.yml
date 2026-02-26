@@ -17,3 +17,7 @@ updates:
     open-pull-requests-limit: 10
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "no.nav.common:*"
+        versions:
+          - "*-beta"
