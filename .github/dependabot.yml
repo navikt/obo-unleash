@@ -19,5 +19,3 @@ updates:
       default-days: 7
     ignore:
       - dependency-name: "no.nav.common:*"
-        versions:
-          - "*-beta"
