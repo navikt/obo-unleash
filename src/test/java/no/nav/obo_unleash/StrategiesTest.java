@@ -1,7 +1,7 @@
 package no.nav.obo_unleash;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import no.nav.common.json.JsonUtils;
+import tools.jackson.core.type.TypeReference;
 import no.nav.common.auth.context.AuthContextHolderThreadLocal;
 import no.nav.common.client.msgraph.AdGroupData;
 import no.nav.common.client.msgraph.AdGroupFilter;
@@ -50,10 +50,9 @@ class StrategiesTest {
         strategy = new ByEnhetAndEnvironmentStrategy(naisEnv, msGraphClient,
                 environmentProperties, tokenClient, authContextHolder);
 
-        String jsonContent = new String(Files.readAllBytes(Paths.get("src/test/resources/adGroupData.json")));
-        ObjectMapper objectMapper = new ObjectMapper();
-        testAdGroupData = objectMapper.readValue(jsonContent, new TypeReference<>() {
-        });
+        testAdGroupData = JsonUtils.fromJson(
+                Files.newInputStream(Paths.get("src/test/resources/adGroupData.json")),
+                new TypeReference<>() {});
     }
 
     @Test
