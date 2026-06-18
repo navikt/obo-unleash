@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <common.version>4.2026.05.05_06.25-f72fab488a93</common.version>
+        <common.version>4.2026.06.17_05.49-50af4f38147e</common.version>
         <unleash.version>12.2.1</unleash.version>
     </properties>
 
