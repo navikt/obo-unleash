@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <common.version>4.2026.05.05_06.25-f72fab488a93</common.version>
+        <common.version>4.2026.09.14_05.57-40a1ead1e559</common.version>
         <unleash.version>12.2.3</unleash.version>
         <!-- Midlertidig override pga Tomcat-CVE-er. Fjernes når Spring Boot henter en ny versjon -->
         <tomcat.version>11.0.25</tomcat.version>
