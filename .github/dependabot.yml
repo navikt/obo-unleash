@@ -9,6 +9,8 @@ updates:
     directory: "/.github/workflows"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 4
 
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
