@@ -22,11 +22,10 @@ spec:
     max: 3
     cpuThresholdPercentage: 75
   resources:
-    limits:
-      cpu: "1"
-      memory: 1Gi
     requests:
-      cpu: 500m
+      cpu: 250m
+      memory: 384Mi
+    limits:
       memory: 512Mi
   azure:
     application:
